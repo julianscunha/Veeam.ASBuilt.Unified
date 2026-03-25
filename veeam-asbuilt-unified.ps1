@@ -1,3 +1,14 @@
+# =========================================
+# Veeam AsBuilt Unified Tool
+# Author: Juliano Cunha
+# GitHub: https://github.com/julianscunha
+# Repository: https://github.com/julianscunha/veeam-asbuilt-unified
+# Description: Unified automation script to generate AsBuilt reports for
+#              Veeam Backup & Replication (VBR) and
+#              Veeam Backup for Microsoft 365 (VBM365)
+# License: MIT
+# =========================================
+
 <#
 .SYNOPSIS
 Unified AsBuiltReport launcher for Veeam Backup & Replication (VBR) and
@@ -9,21 +20,22 @@ Veeam product selected by the user, installs/imports the required AsBuiltReport
 modules, loads the correct Veeam PowerShell module, validates the detected
 version, and generates the report.
 
-.NOTES
-Author  : Juliano Cunha
-GitHub  : https://github.com/julianscunha
-License : MIT
+.PARAMETER Product
+Target Veeam product. Valid values: VBR, VBM365.
+If omitted in interactive mode, the script prompts the user.
 
-.VBR REQUIREMENTS
-- PowerShell 7+
-- Veeam Backup & Replication installed
-- Veeam.Backup.PowerShell.dll available
+.PARAMETER Target
+Target server name. Default: localhost.
 
-.VBM365 REQUIREMENTS
-- Windows PowerShell 5.1
-- Run as Administrator
-- Veeam Backup for Microsoft 365 installed
-- Veeam.Archiver.PowerShell.dll available
+.PARAMETER OutputPath
+Output folder path. If omitted, a temporary folder is used.
+
+.PARAMETER Silent
+Runs without interactive confirmations where possible.
+
+.PARAMETER Relaunched
+Internal parameter used when the script relaunches itself in the required
+PowerShell version.
 #>
 
 [CmdletBinding()]
@@ -52,7 +64,7 @@ if ($Relaunched -eq 0) {
     if (Test-Path $logFile) {
         Remove-Item $logFile -Force
     }
-    New-Item -ItemType File -Path $logFile | Out-Null
+    New-Item -ItemType File -Path $logFile -Force | Out-Null
 }
 
 function Write-Log {
@@ -115,7 +127,7 @@ function Ensure-Directory {
 
     if (-not (Test-Path $Path)) {
         if (Confirm-Action "Directory '$Path' does not exist. Create it") {
-            New-Item -ItemType Directory -Path $Path | Out-Null
+            New-Item -ItemType Directory -Path $Path -Force | Out-Null
             Write-Log -Message "Directory created: $Path" -Level SUCCESS -Indent 1
         }
         else {
@@ -131,7 +143,7 @@ function Ensure-Module {
     )
 
     if (-not (Get-Module -ListAvailable -Name $Name)) {
-        Write-Log -Message "Installing module: $Name" -Indent 1
+        Write-Log -Message "Installing module: $Name" -Level INFO -Indent 1
         Install-Module -Name $Name -Scope CurrentUser -Force -AllowClobber
     }
 
@@ -176,7 +188,7 @@ function Restart-InPowerShell7 {
     }
 
     $argString = $argList -join ' '
-    Write-Log -Message 'Relaunching in PowerShell 7.' -Level INFO -Indent 1
+    Write-Log -Message 'Relaunching in PowerShell 7.' -Indent 1
     Start-Process -FilePath $pwsh -ArgumentList $argString
     exit 0
 }
@@ -206,7 +218,7 @@ function Restart-InWindowsPowerShell {
     }
 
     $argString = $argList -join ' '
-    Write-Log -Message 'Relaunching in Windows PowerShell 5.1.' -Level INFO -Indent 1
+    Write-Log -Message 'Relaunching in Windows PowerShell 5.1.' -Indent 1
     Start-Process -FilePath $powershellExe -ArgumentList $argString
     exit 0
 }
@@ -289,9 +301,6 @@ $psMajor = $PSVersionTable.PSVersion.Major
 Write-Log -Message 'PowerShell validation'
 Write-Log -Message ("Detected version: {0}" -f $PSVersionTable.PSVersion.ToString()) -Indent 1
 
-# ------------------------------
-# COMMON PREREQS
-# ------------------------------
 Write-Log -Message 'PowerShell Gallery prerequisites'
 try {
     if (-not (Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue)) {
