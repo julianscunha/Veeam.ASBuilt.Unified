@@ -1,14 +1,12 @@
 # =========================================
-# Veeam AsBuilt Unified Tool
-# Author: Juliano Cunha
-# GitHub: https://github.com/julianscunha
-# Repository: https://github.com/julianscunha/veeam.asbuilt.unified
-# Description: Unified automation script to generate AsBuilt reports for
-#              Veeam Backup & Replication (VBR) and
-#              Veeam Backup for Microsoft 365 (VBM365)
-# License: MIT
+# Script       : Veeam AsBuilt Unified Tool
+# Version      : 1.0.0
+# Requirements : PowerShell 7+ for VBR, Windows PowerShell 5.1 for VBM365
+# Compatibility: VBR 12+ | VBM365 6+
+# Purpose      : Unified automation script to generate AsBuilt reports for
+#                Veeam Backup & Replication (VBR) and
+#                Veeam Backup for Microsoft 365 (VBM365 / VB365)
 # =========================================
-
 <#
 .SYNOPSIS
 Unified AsBuiltReport launcher for Veeam Backup & Replication (VBR) and
@@ -21,8 +19,8 @@ modules, loads the correct Veeam PowerShell module, validates the detected
 version, and generates the report.
 
 .PARAMETER Product
-Target Veeam product. Valid values: VBR, VBM365.
-If omitted in interactive mode, the script prompts the user.
+Target Veeam product. Valid values: VBR, VBM365. If omitted in interactive
+mode, the script prompts the user.
 
 .PARAMETER Target
 Target server name. Default: localhost.
@@ -42,13 +40,9 @@ PowerShell version.
 param(
     [ValidateSet('VBR','VBM365')]
     [string]$Product,
-
     [string]$Target = 'localhost',
-
     [string]$OutputPath = '',
-
     [switch]$Silent,
-
     [int]$Relaunched = 0
 )
 
@@ -71,20 +65,18 @@ function Write-Log {
     param(
         [Parameter(Mandatory)]
         [string]$Message,
-
         [ValidateSet('INFO','SUCCESS','WARNING','ERROR','DEBUG')]
         [string]$Level = 'INFO',
-
         [int]$Indent = 0
     )
 
     $prefix = ' ' * ($Indent * 2)
     $tag = switch ($Level) {
-        'INFO'    { '[INFO]   ' }
-        'SUCCESS' { '[OK]     ' }
-        'WARNING' { '[WARN]   ' }
-        'ERROR'   { '[ERROR]  ' }
-        'DEBUG'   { '[DEBUG]  ' }
+        'INFO'    { '[INFO] ' }
+        'SUCCESS' { '[OK] ' }
+        'WARNING' { '[WARN] ' }
+        'ERROR'   { '[ERROR] ' }
+        'DEBUG'   { '[DEBUG] ' }
     }
 
     $line = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $tag$prefix$Message"
@@ -165,22 +157,18 @@ function Ensure-Admin {
 
 function Restart-InPowerShell7 {
     $pwsh = 'C:\Program Files\PowerShell\7\pwsh.exe'
+
     if (-not (Test-Path $pwsh)) {
         Stop-Script -Message 'PowerShell 7 was not found at the default path.'
     }
 
     $argList = @(
         '-NoExit'
-        '-File'
-        ('"{0}"' -f $PSCommandPath)
-        '-Product'
-        $Product
-        '-Target'
-        ('"{0}"' -f $Target)
-        '-OutputPath'
-        ('"{0}"' -f $OutputPath)
-        '-Relaunched'
-        '1'
+        '-File' ('"{0}"' -f $PSCommandPath)
+        '-Product' $Product
+        '-Target' ('"{0}"' -f $Target)
+        '-OutputPath' ('"{0}"' -f $OutputPath)
+        '-Relaunched' '1'
     )
 
     if ($Silent) {
@@ -195,22 +183,18 @@ function Restart-InPowerShell7 {
 
 function Restart-InWindowsPowerShell {
     $powershellExe = Join-Path $env:WINDIR 'System32\WindowsPowerShell\v1.0\powershell.exe'
+
     if (-not (Test-Path $powershellExe)) {
         Stop-Script -Message 'Windows PowerShell 5.1 was not found at the default path.'
     }
 
     $argList = @(
         '-NoExit'
-        '-File'
-        ('"{0}"' -f $PSCommandPath)
-        '-Product'
-        $Product
-        '-Target'
-        ('"{0}"' -f $Target)
-        '-OutputPath'
-        ('"{0}"' -f $OutputPath)
-        '-Relaunched'
-        '1'
+        '-File' ('"{0}"' -f $PSCommandPath)
+        '-Product' $Product
+        '-Target' ('"{0}"' -f $Target)
+        '-OutputPath' ('"{0}"' -f $OutputPath)
+        '-Relaunched' '1'
     )
 
     if ($Silent) {
@@ -245,6 +229,7 @@ function Get-Vbm365Version {
     if ($server.PSObject.Properties.Name -contains 'Version') {
         $rawVersion = $server.Version
     }
+
     if (-not $rawVersion -and $server.PSObject.Properties.Name -contains 'Build') {
         $rawVersion = $server.Build
     }
@@ -275,10 +260,10 @@ if (-not $Product) {
 
     Write-Host ''
     Write-Host 'Select the Veeam product to document:'
-    Write-Host '  1 - VBR (Veeam Backup & Replication)'
-    Write-Host '  2 - VBM365 (Veeam Backup for Microsoft 365)'
-    $selection = Read-Host 'Option'
+    Write-Host ' 1 - VBR (Veeam Backup & Replication)'
+    Write-Host ' 2 - VBM365 (Veeam Backup for Microsoft 365)'
 
+    $selection = Read-Host 'Option'
     switch ($selection) {
         '1' { $Product = 'VBR' }
         '2' { $Product = 'VBM365' }
@@ -298,6 +283,7 @@ Write-Log -Message "Relaunched: $Relaunched" -Indent 1
 Write-Log -Message "Silent mode: $Silent" -Indent 1
 
 $psMajor = $PSVersionTable.PSVersion.Major
+
 Write-Log -Message 'PowerShell validation'
 Write-Log -Message ("Detected version: {0}" -f $PSVersionTable.PSVersion.ToString()) -Indent 1
 
@@ -370,6 +356,7 @@ switch ($Product) {
         if (-not (Get-Command Get-VBRServer -ErrorAction SilentlyContinue)) {
             Stop-Script -Message 'Get-VBRServer is not available after loading the VBR module.'
         }
+
         Write-Log -Message 'VBR cmdlets available.' -Level SUCCESS -Indent 1
 
         Write-Log -Message 'Connecting to VBR server'
@@ -462,6 +449,7 @@ switch ($Product) {
         if (-not (Get-Command Get-VBOOrganization -ErrorAction SilentlyContinue)) {
             Stop-Script -Message 'Get-VBOOrganization is not available after loading the VBM365 module.'
         }
+
         Write-Log -Message 'VBM365 cmdlets available.' -Level SUCCESS -Indent 1
 
         Write-Log -Message 'Connecting to VBM365 service'
@@ -503,7 +491,9 @@ switch ($Product) {
 }
 
 Write-Log -Message '===== END ====='
+
 if (-not $Silent) {
     Read-Host 'Press ENTER to exit' | Out-Null
 }
+
 exit 0
