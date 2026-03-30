@@ -1,12 +1,3 @@
-# =========================================
-# Script       : Veeam AsBuilt Unified Tool
-# Version      : 1.0.0
-# Requirements : PowerShell 7+ for VBR, Windows PowerShell 5.1 for VBM365
-# Compatibility: VBR 12+ | VBM365 6+
-# Purpose      : Unified automation script to generate AsBuilt reports for
-#                Veeam Backup & Replication (VBR) and
-#                Veeam Backup for Microsoft 365 (VBM365 / VB365)
-# =========================================
 <#
 .SYNOPSIS
 Unified AsBuiltReport launcher for Veeam Backup & Replication (VBR) and
