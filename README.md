@@ -1,180 +1,172 @@
 # Veeam AsBuilt Unified
 
-[![PowerShell](https://img.shields.io/badge/PowerShell-5.1%20%7C%207%2B-5391FE?logo=powershell&logoColor=white)](https://github.com/julianscunha/veeam.asbuilt.unified)
-[![Veeam](https://img.shields.io/badge/Veeam-VBR%20%7C%20VBM365-00B336)](https://github.com/julianscunha/veeam.asbuilt.unified)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Maintained by Juliano Cunha](https://img.shields.io/badge/Maintained%20by-julianscunha-black)](https://github.com/julianscunha)
+![PowerShell](https://img.shields.io/badge/PowerShell-5.1%20%7C%207-blue.svg)
+![Veeam](https://img.shields.io/badge/Veeam-VBR%20%7C%20VBM365-green.svg)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-Unified PowerShell script to generate AsBuilt reports for:
+---
 
-- **VBR** — Veeam Backup & Replication
-- **VBM365** — Veeam Backup for Microsoft 365
+## Overview
 
-The script does **not auto-detect the product** by design. The user must explicitly choose whether the execution is for **VBR** or **VBM365**, and the script then follows the correct workflow for that product.
+This script provides a unified launcher for AsBuiltReport generation for:
 
-## Why this project exists
+- Veeam Backup & Replication (VBR)
+- Veeam Backup for Microsoft 365 (VBM365 / VB365)
 
-Veeam environments often require different PowerShell runtimes, modules, and connection methods depending on the product being documented. This script standardizes that process and adds:
+It validates the PowerShell runtime, installs or imports the required AsBuilt modules, loads the correct Veeam PowerShell module, checks the detected product version, and generates the report in Word and HTML format.
 
-- structured logging
-- prerequisite validation
-- controlled PowerShell relaunch when required
-- automated AsBuilt module installation/import
-- version validation before report generation
+---
 
-## Supported products
+## How It Works
 
-### VBR
+1. Selects the target Veeam product (`VBR` or `VBM365`)  
+2. Validates the PowerShell runtime required by the chosen workflow  
+3. Prepares PowerShell Gallery and required dependencies  
+4. Ensures the required AsBuiltReport modules are installed and imported  
+5. Loads the correct Veeam PowerShell DLL  
+6. Connects to the target Veeam server or service  
+7. Validates the detected product version  
+8. Generates the AsBuilt report in Word and HTML format  
 
-Workflow for **Veeam Backup & Replication** using:
-
-- `AsBuiltReport.Veeam.VBR`
-- `Veeam.Backup.PowerShell.dll`
-- `Connect-VBRServer`
-- `Get-VBRBackupServerInfo`
-
-### VBM365
-
-Workflow for **Veeam Backup for Microsoft 365** using:
-
-- `AsBuiltReport.Veeam.VB365`
-- `Veeam.Archiver.PowerShell.dll`
-- `Connect-VBOService`
-- `Get-VBOServer`
+---
 
 ## Requirements
 
-### General
+- Veeam Backup & Replication v12+ for the VBR workflow
+- Veeam Backup for Microsoft 365 v6+ for the VBM365 workflow
+- PowerShell 7+ for the VBR workflow
+- Windows PowerShell 5.1 for the VBM365 workflow
+- Administrative rights for the VBM365 workflow
+- Internet access to install required PowerShell modules from PSGallery
+- AsBuiltReport compatible modules
 
-- Internet access to install required PowerShell modules from PSGallery, unless already installed.
-- Permission to run PowerShell scripts.
-- Local access to the target Veeam server or management console components.
+---
 
-### VBR requirements
+## Installation
 
-- PowerShell **7 or later** for this script workflow.
-- Veeam Backup & Replication installed.
-- `Veeam.Backup.PowerShell.dll` present under the default VBR console path.
-- Supported baseline in this script: **VBR 12+**.
-- VBR 13+ is allowed, but logged as a warning because upstream module support may evolve.
+```bash
+git clone https://github.com/julianscunha/Veeam.ASBuilt.Unified.git
+cd Veeam.ASBuilt.Unified
+```
 
-### VBM365 requirements
-
-- **Windows PowerShell 5.1**.
-- Run the shell **as Administrator**.
-- Veeam Backup for Microsoft 365 installed.
-- `Veeam.Archiver.PowerShell.dll` present under the default VBM365 path.
-- Supported baseline in this script: **VBM365 6+**.
-
-## Features
-
-- Explicit user selection between **VBR** and **VBM365**.
-- Separate logic paths per product.
-- Automatic installation of required AsBuilt dependencies.
-- Structured UTF-8 log file.
-- Log overwrite on fresh execution.
-- Log preservation during internal PowerShell relaunch.
-- Version validation before report generation.
-- Optional silent mode for automation.
-
-## Script behavior
-
-When launched without `-Product`, the script prompts the user to choose:
-
-- `1` for **VBR**
-- `2` for **VBM365**
-
-After that, it:
-
-1. validates the PowerShell version for the chosen product
-2. relaunches in the correct shell if needed
-3. validates required modules and DLLs
-4. connects to the selected Veeam product
-5. validates the installed version
-6. generates the AsBuilt report
+---
 
 ## Usage
 
-### Interactive mode
-
 ```powershell
-.\veeam_asbuilt_unified.ps1
+pwsh.exe -File .\veeam_asbuilt_unified.ps1
 ```
 
-The script will ask which product to use.
+---
 
-### Explicit product selection
-
-#### VBR
+## With parameters
 
 ```powershell
-.\veeam_asbuilt_unified.ps1 -Product VBR -Target localhost -OutputPath C:\Reports\VBR
+pwsh.exe -File .\veeam_asbuilt_unified.ps1 `
+    -Product VBR `
+    -Target localhost `
+    -OutputPath "C:\Temp\AsBuiltReport_VBR"
 ```
-
-#### VBM365
 
 ```powershell
-.\veeam_asbuilt_unified.ps1 -Product VBM365 -Target localhost -OutputPath C:\Reports\VBM365
+powershell.exe -File .\veeam_asbuilt_unified.ps1 `
+    -Product VBM365 `
+    -Target localhost `
+    -OutputPath "C:\Temp\AsBuiltReport_VBM365"
 ```
 
-### Silent mode
+---
 
-#### VBR
+## Accept TLS Certificate (for remote execution)
+
+The current repository version does not expose a TLS bypass parameter.
+
+If your VBR environment requires it, a future enhancement could add support for:
 
 ```powershell
-.\veeam_asbuilt_unified.ps1 -Product VBR -Target localhost -OutputPath C:\Reports\VBR -Silent
+Connect-VBRServer -Server "veeam01.domain.local" -ForceAcceptTlsCertificate
 ```
 
-#### VBM365
-
-```powershell
-.\veeam_asbuilt_unified.ps1 -Product VBM365 -Target localhost -OutputPath C:\Reports\VBM365 -Silent
-```
+---
 
 ## Parameters
 
-| Parameter | Description |
-|---|---|
-| `-Product` | Required in automation. Valid values: `VBR`, `VBM365` |
-| `-Target` | Target server name. Default: `localhost` |
-| `-OutputPath` | Directory where reports are generated |
-| `-Silent` | Suppresses prompts and assumes yes for operational confirmations |
-| `-Relaunched` | Internal parameter used by the script during shell relaunch |
+| Parameter | Description | Default |
+|----------|------------|--------|
+| Product | Target product: `VBR` or `VBM365` | Interactive selection |
+| Target | Target server / service name | `localhost` |
+| OutputPath | Output folder path | Temporary folder |
+| Silent | Disables interactive confirmations where possible | Disabled |
+| Relaunched | Internal flag used when switching PowerShell runtime | `0` |
 
-## Log file
+---
 
-Default log location:
-
-```text
-%TEMP%\AsBuiltReport_Veeam_Unified.log
-```
-
-The log is overwritten at each fresh execution and preserved when the script internally relaunches itself in another PowerShell version.
-
-## Output
-
-Depending on the AsBuilt module behavior and installed dependencies, the script generates:
-
-- **Word** report
-- **HTML** report
-
-under the selected output directory.
-
-## Notes
-
-- This script intentionally asks the user which product should be documented instead of trying to infer the product automatically.
-- That behavior avoids ambiguous execution on servers where multiple Veeam products may coexist.
-- Default DLL paths are based on standard installations. Adjust the script if your installation path differs.
-
-## Recommended repository structure
+## Log Output Example
 
 ```text
-.
-├── README.md
-├── LICENSE
-└── veeam_asbuilt_unified.ps1
+2026-03-30 22:01:10 [INFO] ===== START =====
+2026-03-30 22:01:11 [INFO] Selected product: VBR
+2026-03-30 22:01:12 [OK] Module loaded: AsBuiltReport.Core
+2026-03-30 22:01:20 [OK] Connected successfully.
+2026-03-30 22:01:25 [OK] VBR report generated successfully.
+2026-03-30 22:01:30 [INFO] ===== END =====
 ```
+
+---
+
+## Important Notes
+
+- The current repository version already contains formal comment-based help and stronger internal structure than the tape repositories  
+- The script explicitly requires PowerShell 7 for the VBR workflow and Windows PowerShell 5.1 for the VBM365 workflow  
+- The current code warns when VBR 13+ is detected because upstream AsBuilt module validation may lag behind product releases  
+- The current repository already includes author and repository information in the script header, so the main standardization work here is visual consistency with the other repositories  
+
+---
+
+## Recommended Use Case
+
+- Internal documentation generation
+- Pre-upgrade and post-upgrade reporting
+- Customer handoff documentation
+- Environment baseline capture
+
+---
+
+## Scheduling Example (Windows Task Scheduler)
+
+Program:
+```text
+pwsh.exe
+```
+
+Arguments:
+```text
+-File "C:\Scripts\veeam_asbuilt_unified.ps1" -Product VBR -Target localhost -OutputPath "C:\Temp\AsBuiltReport_VBR" -Silent
+```
+
+For VBM365, use `powershell.exe` instead of `pwsh.exe`.
+
+---
+
+## Future Improvements
+
+- Add explicit TLS certificate handling for remote VBR connections
+- Add parameterized report formats
+- Add optional JSON / CSV execution summary
+- Add better module/version matrix output
+- Add support for non-interactive credential handling
+
+---
 
 ## License
 
-MIT
+MIT License
+
+---
+
+## References
+
+https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VBR  
+https://github.com/AsBuiltReport/AsBuiltReport.Veeam.VB365  
+https://helpcenter.veeam.com/docs/vbr/powershell/  
+https://helpcenter.veeam.com/docs/vbo365/powershell/  
