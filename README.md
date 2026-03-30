@@ -98,7 +98,7 @@ After that, it:
 ### Interactive mode
 
 ```powershell
-.\veeam.asbuilt.unified.ps1
+.\veeam_asbuilt_unified.ps1
 ```
 
 The script will ask which product to use.
@@ -108,13 +108,13 @@ The script will ask which product to use.
 #### VBR
 
 ```powershell
-.\veeam.asbuilt.unified.ps1 -Product VBR -Target localhost -OutputPath C:\Reports\VBR
+.\veeam_asbuilt_unified.ps1 -Product VBR -Target localhost -OutputPath C:\Reports\VBR
 ```
 
 #### VBM365
 
 ```powershell
-.\veeam.asbuilt.unified.ps1 -Product VBM365 -Target localhost -OutputPath C:\Reports\VBM365
+.\veeam_asbuilt_unified.ps1 -Product VBM365 -Target localhost -OutputPath C:\Reports\VBM365
 ```
 
 ### Silent mode
@@ -122,13 +122,13 @@ The script will ask which product to use.
 #### VBR
 
 ```powershell
-.\veeam.asbuilt.unified.ps1 -Product VBR -Target localhost -OutputPath C:\Reports\VBR -Silent
+.\veeam_asbuilt_unified.ps1 -Product VBR -Target localhost -OutputPath C:\Reports\VBR -Silent
 ```
 
 #### VBM365
 
 ```powershell
-.\veeam.asbuilt.unified.ps1 -Product VBM365 -Target localhost -OutputPath C:\Reports\VBM365 -Silent
+.\veeam_asbuilt_unified.ps1 -Product VBM365 -Target localhost -OutputPath C:\Reports\VBM365 -Silent
 ```
 
 ## Parameters
@@ -172,7 +172,7 @@ under the selected output directory.
 .
 ├── README.md
 ├── LICENSE
-└── veeam.asbuilt.unified.ps1
+└── veeam_asbuilt_unified.ps1
 ```
 
 ## License
