@@ -2,7 +2,7 @@
 # Veeam AsBuilt Unified Tool
 # Author: Juliano Cunha
 # GitHub: https://github.com/julianscunha
-# Repository: https://github.com/julianscunha/veeam-asbuilt-unified
+# Repository: https://github.com/julianscunha/veeam.asbuilt.unified
 # Description: Unified automation script to generate AsBuilt reports for
 #              Veeam Backup & Replication (VBR) and
 #              Veeam Backup for Microsoft 365 (VBM365)
