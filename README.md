@@ -1,7 +1,7 @@
 # Veeam AsBuilt Unified
 
-[![PowerShell](https://img.shields.io/badge/PowerShell-5.1%20%7C%207%2B-5391FE?logo=powershell&logoColor=white)](https://github.com/julianscunha/veeam-asbuilt-unified)
-[![Veeam](https://img.shields.io/badge/Veeam-VBR%20%7C%20VBM365-00B336)](https://github.com/julianscunha/veeam-asbuilt-unified)
+[![PowerShell](https://img.shields.io/badge/PowerShell-5.1%20%7C%207%2B-5391FE?logo=powershell&logoColor=white)](https://github.com/julianscunha/veeam.asbuilt.unified)
+[![Veeam](https://img.shields.io/badge/Veeam-VBR%20%7C%20VBM365-00B336)](https://github.com/julianscunha/veeam.asbuilt.unified)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Maintained by Juliano Cunha](https://img.shields.io/badge/Maintained%20by-julianscunha-black)](https://github.com/julianscunha)
 
@@ -98,7 +98,7 @@ After that, it:
 ### Interactive mode
 
 ```powershell
-.\veeam-asbuilt-unified.ps1
+.\veeam.asbuilt.unified.ps1
 ```
 
 The script will ask which product to use.
@@ -108,13 +108,13 @@ The script will ask which product to use.
 #### VBR
 
 ```powershell
-.\veeam-asbuilt-unified.ps1 -Product VBR -Target localhost -OutputPath C:\Reports\VBR
+.\veeam.asbuilt.unified.ps1 -Product VBR -Target localhost -OutputPath C:\Reports\VBR
 ```
 
 #### VBM365
 
 ```powershell
-.\veeam-asbuilt-unified.ps1 -Product VBM365 -Target localhost -OutputPath C:\Reports\VBM365
+.\veeam.asbuilt.unified.ps1 -Product VBM365 -Target localhost -OutputPath C:\Reports\VBM365
 ```
 
 ### Silent mode
@@ -122,13 +122,13 @@ The script will ask which product to use.
 #### VBR
 
 ```powershell
-.\veeam-asbuilt-unified.ps1 -Product VBR -Target localhost -OutputPath C:\Reports\VBR -Silent
+.\veeam.asbuilt.unified.ps1 -Product VBR -Target localhost -OutputPath C:\Reports\VBR -Silent
 ```
 
 #### VBM365
 
 ```powershell
-.\veeam-asbuilt-unified.ps1 -Product VBM365 -Target localhost -OutputPath C:\Reports\VBM365 -Silent
+.\veeam.asbuilt.unified.ps1 -Product VBM365 -Target localhost -OutputPath C:\Reports\VBM365 -Silent
 ```
 
 ## Parameters
@@ -172,7 +172,7 @@ under the selected output directory.
 .
 ├── README.md
 ├── LICENSE
-└── veeam-asbuilt-unified.ps1
+└── veeam.asbuilt.unified.ps1
 ```
 
 ## License
